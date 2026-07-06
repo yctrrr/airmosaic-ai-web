@@ -2,14 +2,7 @@
 
 **Atmospheric environment decision intelligence platform** — locally deployed, integrating AI agents, multimodal data acquisition, model analysis, and causal inference.
 
-<details>
-<summary><b>中文</b></summary>
-
-**大气环境决策智能分析平台** — 本地化部署，集成AI Agent、多模态数据获取、模型分析与因果推断。
-
-AirMosaic AI 为外部 AI Agent 和本地科研脚本提供标准化工具——数据目录、获取管道、模型分析方法和因果推断框架。仓库不含原始数据，所有能力按需获取。
-
-</details>
+[**中文**](README_ZH.md)
 
 ---
 
