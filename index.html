@@ -28,28 +28,25 @@
     <section class="hero">
       <h1 data-i18n="hero_title">Atmospheric Environment Decision Intelligence</h1>
       <p class="subtitle" data-i18n="hero_subtitle">A locally deployed analysis platform integrating AI agents, multimodal data acquisition, model analysis, and causal inference.</p>
-      <p class="desc" data-i18n="hero_desc">
-        AirMosaic AI provides standardized tools — data catalog, acquisition pipelines, model analysis methods, and causal inference frameworks — for external AI agents and local research scripts.
-        No data is bundled in the repository. Everything is fetched on demand.
-      </p>
+      <p class="desc" data-i18n="hero_desc">AirMosaic AI provides standardized tools for external AI agents and local research scripts. No data is bundled in the repository.</p>
     </section>
 
     <section class="section" id="platform">
       <h2 data-i18n="platform_title">Local Deployment Architecture</h2>
       <div class="arch">
         <div class="arch-box">
-          <strong>airmosaic-ai-core</strong>
-          <p data-i18n="arch_core">Skills, services, catalog metadata, interfaces — committed to GitHub</p>
+          <strong data-i18n="arch_core_label">airmosaic-ai-core</strong>
+          <p data-i18n="arch_core">Skills, services, catalog metadata, interfaces — committed to GitHub.</p>
         </div>
         <div class="arch-arrow">&rarr;</div>
         <div class="arch-box">
-          <strong>local_workspace</strong>
-          <p data-i18n="arch_workspace">Raw data, model releases, credentials, run outputs — local only</p>
+          <strong data-i18n="arch_workspace_label">local_workspace</strong>
+          <p data-i18n="arch_workspace">Raw data, model releases, credentials, run outputs — local only.</p>
         </div>
         <div class="arch-arrow">&rarr;</div>
         <div class="arch-box">
-          <strong>External Agent</strong>
-          <p data-i18n="arch_agent">Codex, Claude, or custom scripts call services via MCP / REST / CLI</p>
+          <strong data-i18n="arch_agent_label">External Agent</strong>
+          <p data-i18n="arch_agent">Codex, Claude, or custom scripts call services via MCP / REST / CLI.</p>
         </div>
       </div>
     </section>
@@ -67,7 +64,7 @@
         </div>
         <div class="card">
           <h3>GCAM Analysis</h3>
-          <p data-i18n="skill_gcam">Explore BaseX output structure, interpret configuration files, extract prices, quantities, and technology components via parameterized XQuery.</p>
+          <p data-i18n="skill_gcam">Explore BaseX output structure, interpret configuration files, extract prices, quantities, and technology components via XQuery.</p>
         </div>
       </div>
     </section>
@@ -76,17 +73,17 @@
       <h2 data-i18n="services_title">Service Layer</h2>
       <div class="grid">
         <div class="card">
-          <h3>Data Catalog</h3>
+          <h3 data-i18n="svc_catalog_label">Data Catalog</h3>
           <p data-i18n="svc_catalog">List datasets, variables, spatial-temporal coverage, and access methods.</p>
           <code>list_datasets()</code>
         </div>
         <div class="card">
-          <h3>Data Access</h3>
+          <h3 data-i18n="svc_access_label">Data Access</h3>
           <p data-i18n="svc_access">Check local cache availability, report missing data, and resolve paths.</p>
           <code>check_local_availability()</code>
         </div>
         <div class="card">
-          <h3>Causal Design</h3>
+          <h3 data-i18n="svc_causal_label">Causal Design</h3>
           <p data-i18n="svc_causal">Generate structured causal analysis plans: treatment, outcome, confounders, identification strategy, and refutation tests.</p>
           <code>draft_causal_plan()</code>
         </div>
@@ -95,20 +92,18 @@
 
     <section class="section" id="agent">
       <h2 data-i18n="agent_title">External Agent Interface</h2>
-      <p class="desc" data-i18n="agent_desc">
-        Agents do not read files directly. All data access goes through service interfaces exposed via:
-      </p>
+      <p class="desc" data-i18n="agent_desc">Agents do not read files directly. All data access goes through service interfaces:</p>
       <div class="grid">
         <div class="card">
-          <h3>MCP Tools</h3>
+          <h3 data-i18n="agent_mcp_label">MCP Tools</h3>
           <p data-i18n="agent_mcp">Fine-grained function calls returning structured JSON for Codex, Claude, and other MCP-compatible agents.</p>
         </div>
         <div class="card">
-          <h3>REST / OpenAPI</h3>
+          <h3 data-i18n="agent_rest_label">REST / OpenAPI</h3>
           <p data-i18n="agent_rest">Standard HTTP API for web frontends and non-MCP services.</p>
         </div>
         <div class="card">
-          <h3>Python SDK / CLI</h3>
+          <h3 data-i18n="agent_cli_label">Python SDK / CLI</h3>
           <p data-i18n="agent_cli">Local scripting, Jupyter notebooks, and batch processing.</p>
         </div>
       </div>
