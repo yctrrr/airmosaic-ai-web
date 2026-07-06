@@ -1,4 +1,4 @@
-from pathlib import Path
+﻿from pathlib import Path
 
 from airmosaic_core.services import CausalDesignService, DataAccessService, DataCatalogService
 
@@ -8,19 +8,19 @@ def test_catalog_loads_initial_datasets():
     records = catalog.list_datasets()
     dataset_ids = {record.dataset_id for record in records}
 
-    assert len(records) == 6
-    assert "tap_pm25_1km" in dataset_ids
-    assert "meic_emission" in dataset_ids
-    assert "gbd_health" in dataset_ids
+    assert len(records) == 4
+    assert "admin_boundary" in dataset_ids
+    assert "population" in dataset_ids
+    assert "gdp" in dataset_ids
 
 
 def test_data_access_reports_missing_cache():
     catalog = DataCatalogService()
     access = DataAccessService(catalog=catalog, local_workspace=Path("D:/AirMosaicAI/local_workspace"))
 
-    availability = access.check_local_availability("tap_pm25_1km", "*.csv")
+    availability = access.check_local_availability("population", "*.csv")
 
-    assert availability.dataset_id == "tap_pm25_1km"
+    assert availability.dataset_id == "population"
     assert "data_cache" in str(availability.cache_root)
 
 
@@ -36,4 +36,3 @@ def test_causal_design_plan_is_structured():
     assert payload["outcome"] == "mortality"
     assert payload["identification_strategies"]
     assert payload["refutation_tests"]
-

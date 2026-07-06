@@ -20,6 +20,9 @@ coverage/
 !.env.example
 *.log
 
+# Local dev docs (kept outside repo at D:\AirMosaicAI\docs)
+docs/
+
 # Local data and outputs
 data/
 data_cache/
