@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AirMosaic AI | 清空智枢</title>
+  <link rel="icon" href="public/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="app-header">
+    <div class="brand">
+      <div class="brand-mark" aria-hidden="true">AM</div>
+      <div>
+        <h1>AirMosaic AI</h1>
+        <p>清空智枢 · 大气环境决策智能分析平台</p>
+      </div>
+    </div>
+    <nav class="top-nav" aria-label="Primary">
+      <a href="#agent">Agent 接入</a>
+      <a href="#catalog">数据目录</a>
+      <a href="#services">服务能力</a>
+      <a href="#deploy">公开部署</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero-band">
+      <div class="hero-copy">
+        <p class="eyebrow">Agent-ready environmental intelligence</p>
+        <h2>让外部 Agent 调用大气数据、模型设计和因果推断能力。</h2>
+        <p class="hero-text">
+          AirMosaic AI 不托管固定 Agent，也不把大数据全量放进仓库。它提供可审计的数据目录、按需获取 skill、标准服务接口和决策分析边界。
+        </p>
+        <div class="command-row" role="list" aria-label="Example platform calls">
+          <code>search_datasets("PM2.5 1km China 2023")</code>
+          <code>acquire_dataset("tap_pm25_1km")</code>
+          <code>draft_causal_plan(policy, mortality)</code>
+        </div>
+      </div>
+      <div class="system-preview" aria-label="AirMosaic platform preview">
+        <div class="preview-toolbar">
+          <span>Decision Surface</span>
+          <span class="status-dot">Service schema online</span>
+        </div>
+        <div class="preview-grid">
+          <div class="agent-console" id="agent">
+            <div class="panel-label">External Agent Request</div>
+            <div class="query-line">评估 2023 年 PM2.5 暴露变化对县域健康负担的影响</div>
+            <ol class="trace-list">
+              <li><span>01</span> Query catalog</li>
+              <li><span>02</span> Check local cache</li>
+              <li><span>03</span> Acquire TAP subset</li>
+              <li><span>04</span> Draft causal design</li>
+            </ol>
+          </div>
+          <div class="map-visual" aria-label="Raster and county overlay illustration">
+            <div class="tile-field">
+              <span></span><span></span><span></span><span></span><span></span>
+              <span></span><span></span><span></span><span></span><span></span>
+              <span></span><span></span><span></span><span></span><span></span>
+              <span></span><span></span><span></span><span></span><span></span>
+              <span></span><span></span><span></span><span></span><span></span>
+            </div>
+            <div class="region-outline"></div>
+            <div class="map-caption">PM2.5 tiles + socioeconomic boundary join</div>
+          </div>
+          <div class="causal-card">
+            <div class="panel-label">Causal Design</div>
+            <dl>
+              <div><dt>Treatment</dt><dd>clean air policy</dd></div>
+              <div><dt>Outcome</dt><dd>mortality / GDP / inequality</dd></div>
+              <div><dt>Strategy</dt><dd>DID · event study · DML</dd></div>
+            </dl>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="metrics-strip" aria-label="Project boundaries">
+      <div>
+        <span class="metric">Core</span>
+        <p>catalog, skills, services, interfaces</p>
+      </div>
+      <div>
+        <span class="metric">Web</span>
+        <p>website source, API client, decision views</p>
+      </div>
+      <div>
+        <span class="metric">Local</span>
+        <p>data cache, secrets, logs, outputs</p>
+      </div>
+    </section>
+
+    <section class="content-band" id="catalog">
+      <div class="section-heading">
+        <p class="eyebrow">Data catalog</p>
+        <h2>数据不进仓库，进入可查询目录。</h2>
+        <p>第一版已经把 TAP、MEIC、人口、GDP、健康负担和行政区划注册为可被外部 Agent 查询的数据源。</p>
+      </div>
+      <div class="dataset-table" role="table" aria-label="Initial dataset catalog">
+        <div class="table-row table-head" role="row">
+          <span>Dataset</span>
+          <span>Domain</span>
+          <span>Access mode</span>
+          <span>Cache policy</span>
+        </div>
+        <div class="table-row" role="row">
+          <span>TAP PM2.5 1km</span>
+          <span>Air pollution</span>
+          <span>Signed URL list</span>
+          <span>Requested subset only</span>
+        </div>
+        <div class="table-row" role="row">
+          <span>MEIC emissions</span>
+          <span>Emission inventory</span>
+          <span>Authorized archive</span>
+          <span>Source-specific subsets</span>
+        </div>
+        <div class="table-row" role="row">
+          <span>Population grid</span>
+          <span>Socioeconomic</span>
+          <span>Local/public source</span>
+          <span>Analysis geography</span>
+        </div>
+        <div class="table-row" role="row">
+          <span>GDP indicators</span>
+          <span>Socioeconomic</span>
+          <span>Yearbooks/tables</span>
+          <span>Cleaned indicators</span>
+        </div>
+        <div class="table-row" role="row">
+          <span>Health burden</span>
+          <span>Health</span>
+          <span>GBD/codebook</span>
+          <span>Authorized parameters</span>
+        </div>
+        <div class="table-row" role="row">
+          <span>Admin boundary</span>
+          <span>Geospatial</span>
+          <span>Local/public source</span>
+          <span>Boundary vintage tracked</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-band muted" id="services">
+      <div class="section-heading">
+        <p class="eyebrow">Service boundary</p>
+        <h2>外部 Agent 调服务，不直接猜文件路径。</h2>
+      </div>
+      <div class="service-grid">
+        <article>
+          <h3>Data Catalog</h3>
+          <p>列出数据源、变量、时间范围、空间尺度、访问方式和获取 skill。</p>
+          <code>list_datasets()</code>
+        </article>
+        <article>
+          <h3>Data Access</h3>
+          <p>检查本地缓存、返回文件清单、提示缺失数据和获取方式。</p>
+          <code>check_local_availability()</code>
+        </article>
+        <article>
+          <h3>Data Acquisition</h3>
+          <p>按年份、瓦片、变量和 URL 列表调用数据获取 skill。</p>
+          <code>acquire_dataset()</code>
+        </article>
+        <article>
+          <h3>Geospatial</h3>
+          <p>执行网格到行政区聚合、CRS 转换、裁剪和空间统计。</p>
+          <code>aggregate_grid_to_region()</code>
+        </article>
+        <article>
+          <h3>Model Design</h3>
+          <p>根据研究问题生成暴露、健康、经济、不平等分析模型方案。</p>
+          <code>recommend_model()</code>
+        </article>
+        <article>
+          <h3>Causal Design</h3>
+          <p>输出 treatment、outcome、confounders、识别策略和稳健性检验。</p>
+          <code>draft_causal_plan()</code>
+        </article>
+      </div>
+    </section>
+
+    <section class="workflow-band">
+      <div class="section-heading">
+        <p class="eyebrow">Decision workflow</p>
+        <h2>从数据请求到政策简报的可审计路径。</h2>
+      </div>
+      <div class="workflow" aria-label="Decision workflow">
+        <div><span>1</span><strong>Question</strong><p>污染、健康、经济或不平等问题</p></div>
+        <div><span>2</span><strong>Catalog</strong><p>查找数据源和本地缓存状态</p></div>
+        <div><span>3</span><strong>Acquire</strong><p>按需获取数据子集</p></div>
+        <div><span>4</span><strong>Model</strong><p>生成模型输入、输出和 workflow</p></div>
+        <div><span>5</span><strong>Causal</strong><p>设计识别策略和反驳检验</p></div>
+        <div><span>6</span><strong>Brief</strong><p>形成可解释决策摘要</p></div>
+      </div>
+    </section>
+
+    <section class="content-band" id="deploy">
+      <div class="section-heading">
+        <p class="eyebrow">Publish</p>
+        <h2>公开网站建议先用静态部署。</h2>
+        <p>当前源码是纯静态 HTML/CSS/JS，可直接发布，不需要服务器和数据库。</p>
+      </div>
+      <div class="deploy-options">
+        <article>
+          <h3>GitHub Pages</h3>
+          <p>最适合开源项目主页。把 `airmosaic-ai-web` 推到 GitHub 后，在仓库 Pages 设置里选择分支发布。</p>
+        </article>
+        <article>
+          <h3>Vercel</h3>
+          <p>适合后续迁移到 Next.js 或接入 API。可以连接 GitHub 仓库，也可以直接上传静态目录。</p>
+        </article>
+        <article>
+          <h3>Cloudflare Pages</h3>
+          <p>适合静态站和自定义域名，支持 Git 集成、直接上传和预览链接。</p>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <footer class="app-footer">
+    <span>AirMosaic AI · 清空智枢</span>
+    <span>Core services for agent-ready atmospheric decision intelligence.</span>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

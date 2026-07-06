@@ -1,42 +1,66 @@
-# AirMosaic AI Core
+﻿# AirMosaic AI / 清空智枢
 
-AirMosaic AI Core is the service and skill layer for **AirMosaic AI / 清空智枢**，an atmospheric-environment decision intelligence platform.
-
-This repository is designed to be uploaded to GitHub. It contains metadata, data acquisition skills, service interfaces, and lightweight examples. It does **not** contain large raw datasets, private download links, API keys, local cache files, or model outputs.
-
-## Scope
-
-- Data catalog metadata and schemas.
-- Data acquisition skills, starting with TAP PM2.5.
-- Model analysis skills, starting with GCAM scenario and unit-price analysis.
-- Data catalog and data access services for external agents.
-- Model-design and causal-design service boundaries.
-- MCP, REST/OpenAPI, CLI, and Python SDK interface scaffolding.
-
-## First-Stage Services
-
-- `DataCatalogService`: list, search, and describe registered datasets.
-- `DataAccessService`: inspect local cache availability without guessing paths.
-- `CausalDesignService`: draft causal-analysis plans for policy and exposure questions.
+Atmospheric-environment decision intelligence platform. This monorepo contains both the AI agent-facing service/skill core and the web frontend.
 
 ## Repository Layout
 
 ```text
+# Core — skills, services, catalog (agent-facing)
+skills/                   Reusable skills for data acquisition and model analysis
+skills/data_acquisition/  WorldPop, GBD, and other data acquisition skills
+skills/model/             GCAM scenario analysis and configuration skills
 catalog/                  Dataset metadata and schemas
-skills/data_acquisition/  Reusable data acquisition skills
-skills/model/             Reusable model analysis skills
-src/airmosaic_core/       Python service package
-interfaces/               MCP, REST, CLI, Python SDK boundaries
-examples/                 Lightweight examples
+src/airmosaic_core/       Python service package (DataCatalog, DataAccess, CausalDesign)
+examples/                 Agent call examples
 tests/                    Unit tests
+
+# Web — frontend (user-facing)
+index.html                Static site entry point
+app.js                    Application logic
+styles.css                Stylesheet
+public/                   Static assets
+docs/                     Design specs and screenshots
 ```
 
-## Local Workspace
+## Scope
 
-Large data and secrets should live in:
+- Data catalog metadata and schemas
+- Data acquisition and model analysis skills for external AI agents
+- GCAM output structure exploration, configuration, and data extraction
+- MCP, REST/OpenAPI, CLI, and Python SDK service interfaces
+- Atmospheric-environment decision intelligence web frontend
 
-```text
-D:\AirMosaicAI\local_workspace
+## Quick Start
+
+### Core services
+
+```powershell
+cd src/airmosaic_core
+pip install -e ".[dev]"
+python -m airmosaic_core.cli
 ```
 
-Do not commit local data or private credentials.
+### Web frontend
+
+```powershell
+python -m http.server 5176 --bind 127.0.0.1
+```
+
+Then open http://127.0.0.1:5176/.
+
+## GitHub Pages
+
+This static site can be published from the repository root on the `main` branch:
+
+1. Repository `Settings > Pages`
+2. Source: `Deploy from a branch`
+3. Branch: `main`, folder: `/ (root)`
+4. Save
+
+## Data Boundary
+
+This repository does NOT contain: raw environmental datasets, GCAM model releases, BaseX databases, private credentials, API keys, or model outputs. Large data belongs in `${AIRMOSAIC_LOCAL_WORKSPACE}`.
+
+## License
+
+Apache-2.0. See `LICENSE`.

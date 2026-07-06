@@ -1,3 +1,4 @@
+﻿# Python
 .venv/
 __pycache__/
 *.py[cod]
@@ -5,11 +6,21 @@ __pycache__/
 .pytest_cache/
 .mypy_cache/
 .ruff_cache/
+
+# Node / Web
+node_modules/
+.next/
+dist/
+build/
+coverage/
+
+# Env
 .env
 .env.*
 !.env.example
+*.log
 
-# Local data and outputs must stay outside the GitHub project.
+# Local data and outputs
 data/
 data_cache/
 outputs/
@@ -25,4 +36,3 @@ temp/
 *.duckdb
 *.sqlite
 *.zip
-
