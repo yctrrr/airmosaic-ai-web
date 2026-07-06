@@ -11,6 +11,7 @@
 ```
 D:\AirMosaicAI\
   airmosaic-ai-core\     ← 本仓库（GitHub）
+  web\                    ← 网页前端（仅本地）
   local_workspace\        ← 原始数据、模型发行包、密钥（仅本地）
   docs\                   ← 设计文档（仅本地）
 ```
@@ -46,15 +47,6 @@ airmosaic check-availability population
 
 # CLI：生成因果分析方案
 airmosaic draft-causal-plan --question "清洁空气政策是否降低了死亡率？" --treatment "清洁空气政策" --outcome "死亡率"
-```
-
-## 网页前端
-
-静态页面（`index.html`），支持中英文切换，本地启动：
-
-```powershell
-python -m http.server 5176 --bind 127.0.0.1
-# 浏览器打开 http://127.0.0.1:5176
 ```
 
 ## 技能模块

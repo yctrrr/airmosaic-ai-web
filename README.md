@@ -11,6 +11,7 @@
 ```
 D:\AirMosaicAI\
   airmosaic-ai-core\     ← This repo (GitHub)
+  web\                    ← Web frontend (local only)
   local_workspace\        ← Raw data, model releases, credentials (local only)
   docs\                   ← Design docs (local only)
 ```
@@ -46,15 +47,6 @@ airmosaic check-availability population
 
 # CLI: generate causal analysis plan
 airmosaic draft-causal-plan --question "Did clean air policy reduce mortality?" --treatment "clean air policy" --outcome "mortality"
-```
-
-## Web Frontend
-
-A static landing page (`index.html`) with EN/ZH language toggle, served locally:
-
-```powershell
-python -m http.server 5176 --bind 127.0.0.1
-# Open http://127.0.0.1:5176
 ```
 
 ## Skills
