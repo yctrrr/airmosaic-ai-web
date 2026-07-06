@@ -1,0 +1,13 @@
+{
+  "tool": "fetch_gbd_results",
+  "years": [2019, 2020, 2021, 2022, 2023],
+  "locations": [1, 6, 101, 102],
+  "causes": [426, 493, 322, 494, 976, 509, 409],
+  "ages": [1, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 30, 31, 32, 235],
+  "sexes": [1, 2],
+  "measures": [1],
+  "metrics": [3],
+  "version": 8352,
+  "browser_debug_port": 9222,
+  "output": "${AIRMOSAIC_LOCAL_WORKSPACE}/data_cache/gbd_health/raw/gbd_2019_2023_mortality_rate.csv"
+}

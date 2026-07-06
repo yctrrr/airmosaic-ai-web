@@ -1,0 +1,30 @@
+dataset_id: admin_boundary
+name: Administrative Boundaries and Spatial Reference
+domain: geospatial
+description: Administrative boundaries, region codes, grid reference layers, and coordinate reference metadata.
+spatial_coverage: China and global reference layers when available
+spatial_resolution: province, city, county, grid
+temporal_coverage: boundary-version-dependent
+temporal_resolution: static or versioned
+formats:
+  - shp
+  - geojson
+  - gpkg
+  - csv
+variables:
+  - name: region_code
+    description: Administrative region code.
+    unit: code
+  - name: geometry
+    description: Spatial geometry.
+    unit: geometry
+access_method: local archive or public boundary dataset
+license_or_terms: Source-specific terms apply.
+local_cache_policy: Keep lightweight boundaries in local cache; document boundary vintage.
+default_cache_root: ${AIRMOSAIC_LOCAL_WORKSPACE}/data_cache/admin_boundary
+acquisition_skill: skills/data_acquisition/local_indexer
+quality_notes: Boundary changes across years must be harmonized before panel analysis.
+example_queries:
+  - aggregate grid PM2.5 to county boundaries
+  - match socioeconomic indicators to administrative codes
+

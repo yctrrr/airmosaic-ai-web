@@ -1,0 +1,8 @@
+{
+  "tool": "extract_gcam_technology_components",
+  "scenarios": ["DPEC_SSP1"],
+  "regions": ["AH","BJ"],
+  "sectors": ["cement","iron and steel"],
+  "years": [2021, 2030],
+  "output_dir": "${AIRMOSAIC_LOCAL_WORKSPACE}/outputs/gcam/tech_io"
+}

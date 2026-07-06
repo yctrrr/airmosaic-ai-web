@@ -1,0 +1,4 @@
+interface:
+  display_name: "WorldPop Data Acquisition"
+  short_description: "Discover and download WorldPop population datasets."
+  default_prompt: "Use the WorldPop skill to discover, download, or query gridded population data."

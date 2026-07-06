@@ -1,0 +1,5 @@
+{
+  "tool": "inspect_gcam_config",
+  "action": "list_scenario_components",
+  "config_file": "${GCAM_RELEASE_DIR}/exe/DPEC_China/configuration_dpec_ssp1.xml"
+}

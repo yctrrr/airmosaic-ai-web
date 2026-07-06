@@ -1,0 +1,29 @@
+dataset_id: gdp_economic
+name: GDP and Socioeconomic Indicators
+domain: socioeconomic
+description: GDP, income, industrial structure, and related socioeconomic indicators for inequality and policy analysis.
+spatial_coverage: China administrative regions
+spatial_resolution: province, city, county, or grid depending on source
+temporal_coverage: dataset-dependent
+temporal_resolution: annual
+formats:
+  - csv
+  - xlsx
+  - parquet
+variables:
+  - name: GDP
+    description: Gross domestic product.
+    unit: currency, source-dependent
+  - name: income
+    description: Income or consumption indicator.
+    unit: currency, source-dependent
+access_method: local archive, statistical yearbook extraction, or public table
+license_or_terms: Source-specific terms apply.
+local_cache_policy: Store cleaned indicators and provenance, not raw restricted documents.
+default_cache_root: ${AIRMOSAIC_LOCAL_WORKSPACE}/data_cache/gdp
+acquisition_skill: skills/data_acquisition/gdp
+quality_notes: Administrative code harmonization is required across years.
+example_queries:
+  - county GDP matched with PM2.5 exposure
+  - socioeconomic inequality in pollution exposure
+

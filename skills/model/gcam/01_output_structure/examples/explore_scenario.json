@@ -1,0 +1,7 @@
+{
+  "tool": "explore_gcam_output_structure",
+  "action": "list_sectors",
+  "scenario": "${SCENARIO_NAME}",
+  "region": "AH",
+  "output_dir": "${AIRMOSAIC_LOCAL_WORKSPACE}/outputs/gcam/explore"
+}

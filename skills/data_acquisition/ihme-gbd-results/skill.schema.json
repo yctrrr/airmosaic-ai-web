@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "IHME GBD Results acquisition request",
+  "type": "object",
+  "required": ["tool", "years", "locations", "causes", "ages", "sexes", "measures", "metrics", "output"],
+  "properties": {
+    "tool": {
+      "type": "string",
+      "enum": ["fetch_gbd_results"]
+    },
+    "years": { "type": "array", "items": { "type": "integer" }, "minItems": 1 },
+    "locations": { "type": "array", "items": { "type": "integer" }, "minItems": 1 },
+    "causes": { "type": "array", "items": { "type": "integer" }, "minItems": 1 },
+    "ages": { "type": "array", "items": { "type": "integer" }, "minItems": 1 },
+    "sexes": { "type": "array", "items": { "type": "integer" }, "minItems": 1 },
+    "measures": { "type": "array", "items": { "type": "integer" }, "minItems": 1 },
+    "metrics": { "type": "array", "items": { "type": "integer" }, "minItems": 1 },
+    "version": { "type": "integer", "default": 8352 },
+    "context": { "type": "string", "default": "cause" },
+    "population_group": { "type": "integer", "default": 1 },
+    "browser_debug_port": { "type": "integer", "default": 9222 },
+    "output": {
+      "type": "string",
+      "description": "Local-only CSV output path under the configured AirMosaic local workspace."
+    }
+  },
+  "additionalProperties": false
+}

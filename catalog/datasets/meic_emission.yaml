@@ -1,0 +1,29 @@
+dataset_id: meic_emission
+name: MEIC Emission Inventory
+domain: emission
+description: Multi-resolution emission inventory used for source contribution and policy scenario analysis.
+spatial_coverage: China
+spatial_resolution: gridded inventory, release-dependent
+temporal_coverage: release-dependent
+temporal_resolution: annual or monthly depending on product
+formats:
+  - nc
+  - csv
+  - raster
+variables:
+  - name: emission
+    description: Pollutant emissions by sector and species.
+    unit: release-dependent
+  - name: sector
+    description: Emission sector.
+    unit: category
+access_method: local archive, authorized download, or project-provided release
+license_or_terms: Check MEIC data terms before redistribution.
+local_cache_policy: Register source metadata and cache only authorized subsets.
+default_cache_root: ${AIRMOSAIC_LOCAL_WORKSPACE}/data_cache/meic
+acquisition_skill: skills/data_acquisition/meic
+quality_notes: Sector definitions and species names must be normalized per release.
+example_queries:
+  - MEIC power sector SO2 emission trend
+  - sector contribution data for PM2.5 scenario analysis
+

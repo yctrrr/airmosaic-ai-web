@@ -1,0 +1,36 @@
+dataset_id: tap_pm25_1km
+name: TAP PM2.5 1km
+domain: air_pollution
+description: Tracking Air Pollution in China PM2.5 data distributed as tiled files.
+spatial_coverage: China
+spatial_resolution: 1 km grid tiles
+temporal_coverage: "2000-present, depending on TAP release and URL list"
+temporal_resolution: annual, monthly, daily depending on product
+formats:
+  - csv
+  - csv.zip
+  - nc
+variables:
+  - name: PM2.5
+    description: PM2.5 concentration.
+    unit: microgram per cubic meter
+    aliases: [pm25, PM25]
+  - name: GridID
+    description: Grid identifier.
+    unit: dimensionless
+  - name: Longitude
+    description: Grid center longitude.
+    unit: degree
+  - name: Latitude
+    description: Grid center latitude.
+    unit: degree
+access_method: signed URL list or TAP data portal export
+license_or_terms: TAP non-commercial data use terms apply.
+local_cache_policy: Download only requested years, products, and tiles; never commit cached data.
+default_cache_root: ${AIRMOSAIC_LOCAL_WORKSPACE}/data_cache/tap
+acquisition_skill: skills/data_acquisition/tap
+quality_notes: URL tokens may expire; acquisition skill must preserve logs and missing-file reports.
+example_queries:
+  - PM2.5 1km China 2023 tiles 012 and 013
+  - TAP annual PM2.5 county exposure aggregation
+

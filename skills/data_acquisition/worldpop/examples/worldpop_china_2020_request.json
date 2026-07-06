@@ -1,0 +1,10 @@
+{
+  "tool": "acquire_worldpop_population",
+  "project": "wpgp",
+  "iso3": "CHN",
+  "year": 2020,
+  "contains": ["population"],
+  "extensions": [".tif", ".tiff", ".zip"],
+  "download": true,
+  "root": "${AIRMOSAIC_LOCAL_WORKSPACE}/data_cache/worldpop"
+}

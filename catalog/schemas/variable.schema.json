@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://airmosaic.ai/schemas/variable.schema.json",
+  "title": "AirMosaic Variable",
+  "type": "object",
+  "required": ["name", "description", "unit"],
+  "properties": {
+    "name": { "type": "string" },
+    "description": { "type": "string" },
+    "unit": { "type": "string" },
+    "aliases": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  }
+}
+

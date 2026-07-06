@@ -1,0 +1,4 @@
+interface:
+  display_name: "IHME GBD Results"
+  short_description: "Fetch IHME GBD results through a logged-in browser."
+  default_prompt: "Use the IHME GBD Results skill to fetch mortality, population, cause, age, sex, location, metric, or year data."

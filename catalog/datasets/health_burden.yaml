@@ -1,0 +1,31 @@
+dataset_id: gbd_health
+name: Health Burden and Baseline Mortality Parameters
+domain: health
+description: Baseline mortality, age structure, disease endpoints, and concentration-response inputs for health burden analysis.
+spatial_coverage: China and subnational regions when available
+spatial_resolution: national or administrative unit
+temporal_coverage: dataset-dependent
+temporal_resolution: annual
+formats:
+  - csv
+  - xlsx
+  - rds
+variables:
+  - name: MortRate
+    description: Baseline mortality rate.
+    unit: deaths per 100000 population
+  - name: RR
+    description: Relative risk.
+    unit: dimensionless
+  - name: agegroup
+    description: Age group.
+    unit: category
+access_method: local codebook, GBD exports, or authorized health parameter tables
+license_or_terms: Source-specific health data terms apply.
+local_cache_policy: Cache only derived or authorized parameter tables.
+default_cache_root: ${AIRMOSAIC_LOCAL_WORKSPACE}/data_cache/gbd_health
+acquisition_skill: skills/data_acquisition/ihme-gbd-results
+quality_notes: Endpoint definitions and CR function versions must be recorded.
+example_queries:
+  - PM2.5 attributable mortality using MRBRT
+  - age-specific baseline mortality for China 2019

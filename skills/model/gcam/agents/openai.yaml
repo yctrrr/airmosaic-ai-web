@@ -1,0 +1,4 @@
+interface:
+  display_name: GCAM Model Analysis
+  short_description: Explore GCAM output structure, configuration, and extract scenario data.
+  default_prompt: Use the GCAM skill to inspect scenario outputs, understand model configuration, and extract prices, quantities, or technology components.

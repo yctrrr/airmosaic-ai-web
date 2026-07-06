@@ -1,0 +1,28 @@
+dataset_id: population_grid
+name: Population Grid and Administrative Population
+domain: socioeconomic
+description: Population data for exposure weighting, health burden estimation, and socioeconomic matching.
+spatial_coverage: China and administrative regions
+spatial_resolution: grid or administrative unit
+temporal_coverage: dataset-dependent
+temporal_resolution: annual or census-year
+formats:
+  - csv
+  - tif
+  - parquet
+variables:
+  - name: population
+    description: Population count.
+    unit: persons
+  - name: age_group
+    description: Age group category when available.
+    unit: category
+access_method: local archive, public data portal, or project-provided table
+license_or_terms: Source-specific terms apply.
+local_cache_policy: Cache processed subsets aligned to analysis geography.
+default_cache_root: ${AIRMOSAIC_LOCAL_WORKSPACE}/data_cache/population
+acquisition_skill: skills/data_acquisition/worldpop
+quality_notes: Age structure and boundary version must be recorded.
+example_queries:
+  - population weighted PM2.5 exposure by county
+  - age-specific exposure population for health burden

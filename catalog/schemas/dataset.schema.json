@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://airmosaic.ai/schemas/dataset.schema.json",
+  "title": "AirMosaic Dataset",
+  "type": "object",
+  "required": [
+    "dataset_id",
+    "name",
+    "domain",
+    "description",
+    "spatial_coverage",
+    "spatial_resolution",
+    "temporal_coverage",
+    "temporal_resolution",
+    "formats",
+    "variables",
+    "access_method",
+    "local_cache_policy",
+    "default_cache_root",
+    "acquisition_skill"
+  ],
+  "properties": {
+    "dataset_id": { "type": "string" },
+    "name": { "type": "string" },
+    "domain": { "type": "string" },
+    "description": { "type": "string" },
+    "spatial_coverage": { "type": "string" },
+    "spatial_resolution": { "type": "string" },
+    "temporal_coverage": { "type": "string" },
+    "temporal_resolution": { "type": "string" },
+    "formats": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "variables": {
+      "type": "array",
+      "items": { "$ref": "variable.schema.json" }
+    },
+    "access_method": { "type": "string" },
+    "license_or_terms": { "type": "string" },
+    "local_cache_policy": { "type": "string" },
+    "default_cache_root": { "type": "string" },
+    "acquisition_skill": { "type": "string" },
+    "quality_notes": { "type": "string" },
+    "example_queries": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  }
+}
+
