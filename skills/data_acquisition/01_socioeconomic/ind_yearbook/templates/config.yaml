@@ -1,0 +1,98 @@
+﻿# yearbook_processing_config.yaml
+# 
+# Adjust these parameters before running any pipeline.
+# Paths may use either / or \ (normalized at runtime).
+
+# --- Year range ---
+yearbook_years:
+  start: 2013       # First yearbook edition year (data year = yearbook_year - 1)
+  end:   2026       # Last yearbook edition year
+
+# --- Directory structure ---
+paths:
+  # Root directory containing yearbook folders named like: 中国工业统计年鉴{year}（Excel）
+  yearbook_root: ""
+  
+  # Output subdirectories (relative to yearbook_root, created if necessary)
+  output:
+    economic_indicators: "economic_indicators"
+    physical_output: "physical_output"
+  
+  # Sector code lookup table (GB/T 4754-2012)
+  sector_code_lookup: "RESSET_NLC_INDUSTRYCODE_2012__N_1.csv"
+
+# --- Region whitelist ---
+regions:
+  - "全国"
+  - "北京"
+  - "天津"
+  - "河北"
+  - "山西"
+  - "内蒙古"
+  - "辽宁"
+  - "吉林"
+  - "黑龙江"
+  - "上海"
+  - "江苏"
+  - "浙江"
+  - "安徽"
+  - "福建"
+  - "江西"
+  - "山东"
+  - "河南"
+  - "湖北"
+  - "湖南"
+  - "广东"
+  - "广西"
+  - "海南"
+  - "重庆"
+  - "四川"
+  - "贵州"
+  - "云南"
+  - "西藏"
+  - "陕西"
+  - "甘肃"
+  - "青海"
+  - "宁夏"
+  - "新疆"
+
+# Region name aliases (normalized → standard)
+region_aliases:
+  总计: "全国"
+  合计: "全国"
+
+# --- Table exclusion patterns ---
+# Files whose names match any of these patterns are treated as
+# non-industry grouping tables and excluded from processing.
+exclude_patterns:
+  - "国有控股"
+  - "有限责任公司"
+  - "股份有限公司"
+  - "私营"
+  - "港澳台商"
+  - "外商投资"
+  - "大型"
+  - "中型"
+  - "小型"
+
+# --- Cleaning report ---
+cleaning_report:
+  enabled: true
+  format: "markdown"
+  suffix: "清洗说明.md"
+
+# --- Missing data imputation ---
+imputation:
+  partial_missing_fill: "zero"         # Fill missing provinces as 0 when others exist
+  full_missing_method: "interpolate"   # Interpolate national series, allocate by shares
+  endpoint_extrapolation: "growth_rate" # Use 2-year growth rate for tails
+
+# --- MEIC supplementation (product pipeline only) ---
+meic:
+  enabled: false
+  # Paths to MEIC data files
+  other_products: ""
+  formal_energy_physical: ""
+  formal_energy_standard_coal: ""
+  sinter_ratio_file: ""
+  cement_workbook: ""

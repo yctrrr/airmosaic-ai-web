@@ -10,8 +10,10 @@ def test_catalog_loads_initial_datasets():
 
     assert len(records) == 4
     assert "admin_boundary" in dataset_ids
-    assert "population" in dataset_ids
-    assert "gdp" in dataset_ids
+    assert "population_grid" in dataset_ids
+    assert "gdp_economic" in dataset_ids
+    assert catalog.describe_dataset("population")["dataset_id"] == "population_grid"
+    assert catalog.describe_dataset("gdp")["dataset_id"] == "gdp_economic"
 
 
 def test_data_access_reports_missing_cache():
@@ -20,7 +22,7 @@ def test_data_access_reports_missing_cache():
 
     availability = access.check_local_availability("population", "*.csv")
 
-    assert availability.dataset_id == "population"
+    assert availability.dataset_id == "population_grid"
     assert "data_cache" in str(availability.cache_root)
 
 

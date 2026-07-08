@@ -20,6 +20,13 @@ class DatasetRecord:
 class DataCatalogService:
     """Read and query AirMosaic dataset metadata."""
 
+    DATASET_ALIASES = {
+        "population": "population_grid",
+        "gdp": "gdp_economic",
+        "health": "gbd_health",
+        "gbd": "gbd_health",
+    }
+
     def __init__(self, catalog_dir: str | Path | None = None) -> None:
         if catalog_dir is None:
             catalog_dir = Path(__file__).resolve().parents[3] / "catalog" / "datasets"
@@ -42,10 +49,14 @@ class DataCatalogService:
         return records
 
     def describe_dataset(self, dataset_id: str) -> dict[str, Any]:
+        dataset_id = self.resolve_dataset_id(dataset_id)
         for record in self.list_datasets():
             if record.dataset_id == dataset_id:
                 return record.metadata
         raise KeyError(f"Dataset not found: {dataset_id}")
+
+    def resolve_dataset_id(self, dataset_id: str) -> str:
+        return self.DATASET_ALIASES.get(dataset_id, dataset_id)
 
     def search_datasets(self, query: str) -> list[DatasetRecord]:
         terms = [term.lower() for term in query.split() if term.strip()]
@@ -74,4 +85,3 @@ class DataCatalogService:
         if not isinstance(data, dict):
             raise ValueError(f"Invalid dataset metadata: {path}")
         return data
-

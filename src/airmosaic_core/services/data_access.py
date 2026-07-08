@@ -36,9 +36,18 @@ class DataAccessService:
         dataset_id: str,
         pattern: str = "*",
     ) -> FileAvailability:
+        dataset_id = self.catalog.resolve_dataset_id(dataset_id)
         metadata = self.catalog.describe_dataset(dataset_id)
         cache_root = self._resolve_cache_root(metadata["default_cache_root"])
-        files = sorted(path for path in cache_root.glob(pattern) if path.is_file()) if cache_root.exists() else []
+        files = (
+            sorted(
+                path
+                for path in cache_root.glob(pattern)
+                if path.is_file() and not path.name.startswith(".")
+            )
+            if cache_root.exists()
+            else []
+        )
         missing_hint = None if files else f"No files found under {cache_root}. Use {metadata['acquisition_skill']}."
         return FileAvailability(
             dataset_id=dataset_id,
@@ -53,4 +62,3 @@ class DataAccessService:
     def _resolve_cache_root(self, template: str) -> Path:
         value = template.replace("${AIRMOSAIC_LOCAL_WORKSPACE}", str(self.local_workspace))
         return Path(value)
-
