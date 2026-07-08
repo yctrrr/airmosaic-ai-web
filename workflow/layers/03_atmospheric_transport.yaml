@@ -1,0 +1,164 @@
+﻿# Layer 3: Atmospheric Transport & Chemistry
+# Emission → Transport → Chemistry → Deposition → Concentration
+
+layer:
+  id: "03_atmospheric_transport"
+  name: "大气化学传输模拟"
+  description: >
+    Simulate how emissions translate to ambient concentrations
+    through atmospheric transport, chemical transformation,
+    and deposition processes. Modular: emission → transport →
+    chemistry → deposition → concentration update.
+
+inputs:
+  required:
+    - id: "emission_grid"
+      source: "layer_02.output"
+      description: "Gridded emissions by pollutant"
+      spatial_resolution: "1km / 0.1°"
+      temporal_resolution: "hourly / daily"
+
+    - id: "meteorology"
+      source: "external/era5_or_wrf"
+      description: "Wind, temperature, humidity, PBL height, precipitation"
+      spatial_resolution: "0.25°"
+      temporal_resolution: "hourly"
+
+    - id: "initial_concentration"
+      source: "external/reanalysis_or_monitoring"
+      description: "Initial/boundary concentration fields"
+
+  optional:
+    - id: "land_use"
+      source: "external/land_cover"
+      description: "Land use for dry deposition velocity"
+    - id: "monitoring_data"
+      source: "external/cn_air_quality"
+      description: "Ground monitoring for validation"
+
+modules:
+  - id: "emission_module"
+    name: "排放模块"
+    description: "Prepare gridded emissions with temporal profiles and speciation"
+
+    high_data:
+      method: "emission_preprocessor_ml"
+      description: "ML-based temporal allocation and chemical speciation using local profiles"
+      inputs: [emission_grid]
+      outputs: [model_ready_emission]
+      parameters:
+        temporal_profiles: "diurnal/weekly/monthly"
+        speciation: "CB6 / SAPRC / MOZART profiles"
+
+    low_data:
+      method: "default_profiles"
+      description: "Default temporal profiles and speciation from literature"
+      inputs: [emission_grid]
+      outputs: [model_ready_emission]
+      parameters:
+        temporal_profiles: "monthly only"
+        speciation: "default CB6 profiles"
+
+  - id: "transport_module"
+    name: "传输模块"
+    description: "Advection, diffusion, and convection of pollutants"
+
+    high_data:
+      method: "physics_transformer"
+      description: >
+        Transformer surrogate model trained on WRF-CMAQ output.
+        Predicts transport patterns from meteorology without running
+        full physics simulation. 100-1000x speedup.
+      inputs: [model_ready_emission, meteorology]
+      outputs: [transported_concentration]
+      training_data: "wrf_cmaq_simulation_output"
+
+    low_data:
+      method: "gaussian_plume"
+      description: "Gaussian plume / puff model with empirical dispersion parameters"
+      inputs: [model_ready_emission, meteorology]
+      outputs: [transported_concentration]
+
+  - id: "chemistry_module"
+    name: "化学模块"
+    description: "Gas-phase, aqueous, and heterogeneous chemistry"
+
+    high_data:
+      method: "chemistry_surrogate"
+      description: >
+        Neural network surrogate for chemical mechanisms.
+        Trained on CMAQ/GEOS-Chem chemical solver output.
+      inputs: [transported_concentration, meteorology]
+      outputs: [chemical_transformed_concentration]
+      mechanism: "CB6 / SAPRC07 / MOZART"
+
+    low_data:
+      method: "first_order_decay"
+      description: "First-order chemical decay with literature rate constants"
+      inputs: [transported_concentration, meteorology]
+      outputs: [chemical_transformed_concentration]
+
+  - id: "deposition_module"
+    name: "沉降模块"
+    description: "Dry and wet deposition removal"
+
+    high_data:
+      method: "deposition_ml"
+      description: "ML-predicted deposition velocities from land use and meteorology"
+      inputs: [chemical_transformed_concentration, meteorology, land_use]
+      outputs: [deposition_flux]
+
+    low_data:
+      method: "resistance_model"
+      description: "Wesely resistance model with lookup tables"
+      inputs: [chemical_transformed_concentration, meteorology, land_use]
+      outputs: [deposition_flux]
+
+  - id: "concentration_update"
+    name: "浓度更新"
+    description: "Update concentration field: C_new = C_old + transport + chemistry - deposition + emission"
+
+    method: "euler_integration"
+    description: "First-order Euler integration of all process contributions"
+    inputs: [model_ready_emission, transported_concentration, chemical_transformed_concentration, deposition_flux]
+    outputs: [concentration_field]
+
+outputs:
+  - id: "concentration_field"
+    name: "浓度场"
+    type: "gridded_timeseries"
+    unit: "μg/m3 / ppb"
+    spatial: "1km / 0.1°"
+    temporal: "hourly / daily"
+    species: ["PM2.5", "O3", "NO2", "SO2", "CO"]
+
+  - id: "deposition_flux"
+    name: "沉降通量"
+    type: "gridded_timeseries"
+    unit: "kg/ha/year"
+    spatial: "1km"
+    temporal: "annual"
+
+  - id: "process_contributions"
+    name: "过程贡献分解"
+    type: "table"
+    description: "Concentration change attributable to each module per timestep"
+
+traceability:
+  - source: "layer_02"
+    link: "workflow/layers/02_emission_inventory.yaml"
+    description: "Emissions feed into transport simulation"
+  - source: "meteorology"
+    link: "外部: ERA5 / WRF"
+    description: "Meteorological driving fields"
+  - source: "monitoring_data"
+    link: "外部: 中国环境监测总站"
+    description: "Ground truth for model validation"
+
+method_selection:
+  rule: >
+    If total emission grid cells × timesteps > 10^6,
+    use high_data (transformer/surrogate) methods.
+    Otherwise use low_data (empirical) methods.
+  threshold:
+    grid_cells_times_timesteps: 1000000

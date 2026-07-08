@@ -1,0 +1,189 @@
+﻿# Layer 4: Socioeconomic Impact Assessment
+# 浓度/排放 → 健康损失 → 碳社会成本 → 不平等效应
+
+layer:
+  id: "04_socioeconomic_impact"
+  name: "社会经济影响评估"
+  description: >
+    Assess how changes in pollution concentration and carbon emissions
+    translate to health burden, economic damage, and distributional inequality.
+
+inputs:
+  required:
+    - id: "concentration_field"
+      source: "layer_03.output"
+      description: "Gridded ambient concentrations"
+      spatial_resolution: "1km"
+      temporal_resolution: "daily/annual"
+
+    - id: "population"
+      source: "catalog/datasets/population.yaml"
+      description: "Gridded population by age group"
+      spatial_resolution: "1km"
+      temporal_resolution: "annual"
+
+    - id: "baseline_mortality"
+      source: "skills/data_acquisition/ihme-gbd-results"
+      description: "Baseline mortality/morbidity rates by cause, age, region"
+
+    - id: "carbon_emission"
+      source: "layer_02.output"
+      description: "CO2 emission trajectory"
+
+  optional:
+    - id: "gdp"
+      source: "catalog/datasets/gdp.yaml"
+      description: "GDP for economic damage normalization"
+    - id: "income_distribution"
+      source: "external/household_survey"
+      description: "Income distribution for inequality analysis"
+
+modules:
+  - id: "exposure_assessment"
+    name: "暴露评估"
+    description: "Match population to ambient concentrations"
+
+    high_data:
+      method: "time_activity_transformer"
+      description: >
+        Transformer model integrating time-activity patterns,
+        indoor/outdoor ratios, and personal exposure monitoring data.
+      inputs: [concentration_field, population]
+      outputs: [personal_exposure]
+
+    low_data:
+      method: "grid_average"
+      description: "Grid-cell average concentration × population"
+      inputs: [concentration_field, population]
+      outputs: [personal_exposure]
+
+  - id: "health_burden"
+    name: "健康负担评估"
+    description: "Estimate attributable mortality and morbidity"
+
+    high_data:
+      method: "causal_ml_health"
+      description: >
+        Double ML / causal forest for heterogeneous treatment effects.
+        Estimates cause-specific mortality response to pollution changes
+        with confounder adjustment (meteorology, demographics, healthcare access).
+      inputs: [personal_exposure, baseline_mortality, population]
+      outputs: [attributable_deaths, attributable_dalys]
+      identification: "DID + DML with meteorological instruments"
+
+    low_data:
+      method: "ier_gbd"
+      description: >
+        Integrated Exposure-Response (IER) function from GBD 2019.
+        RR = 1 + α × (1 - exp(-β × (C - C0)^γ))
+      inputs: [personal_exposure, baseline_mortality]
+      outputs: [attributable_deaths]
+      parameters:
+        source: "GBD 2019 IER parameters"
+        causes: ["IHD", "stroke", "COPD", "lung_cancer", "LRI"]
+
+  - id: "economic_damage"
+    name: "经济损失评估"
+    description: "Monetize health damage and carbon social cost"
+
+    high_data:
+      method: "integrated_assessment_ml"
+      description: >
+        ML-enhanced IAM linking emissions → temperature → economic damage.
+        Accounts for sectoral heterogeneity and adaptation.
+      inputs: [carbon_emission, attributable_deaths, gdp]
+      outputs: [economic_damage, carbon_social_cost]
+
+    low_data:
+      method: "vsl_scc"
+      description: >
+        Value of Statistical Life (VSL) for health damage +
+        Social Cost of Carbon (SCC) from literature.
+        Economic damage = deaths × VSL + CO2 × SCC
+      inputs: [attributable_deaths, carbon_emission, gdp]
+      outputs: [economic_damage]
+      parameters:
+        vsl: "Province-adjusted VSL from willingness-to-pay studies"
+        scc: "Social Cost of Carbon from US EPA / IWG estimates"
+
+  - id: "inequality_analysis"
+    name: "不平等分析"
+    description: "Assess distributional impacts across income groups and regions"
+
+    high_data:
+      method: "distributional_causal_ml"
+      description: >
+        Quantile treatment effects + distributional decomposition.
+        Estimates how pollution reduction benefits vary across
+        income deciles and spatial units.
+      inputs: [personal_exposure, attributable_deaths, income_distribution]
+      outputs: [inequality_index, concentration_index, benefit_incidence]
+
+    low_data:
+      method: "income_grouped_comparison"
+      description: >
+        Group population by income tercile, compute exposure and
+        health burden per group, compare ratios.
+      inputs: [personal_exposure, attributable_deaths, income_distribution]
+      outputs: [inequality_index]
+
+outputs:
+  - id: "attributable_deaths"
+    name: "归因死亡人数"
+    type: "table"
+    unit: "deaths/year"
+    spatial: "grid / county"
+    temporal: "annual"
+    causes: ["IHD", "stroke", "COPD", "lung_cancer", "LRI"]
+
+  - id: "economic_damage"
+    name: "经济损失"
+    type: "table"
+    unit: "10^8 CNY / year"
+    spatial: "province"
+    temporal: "annual"
+    components: ["health_damage", "carbon_social_cost", "labor_productivity"]
+
+  - id: "inequality_index"
+    name: "不平等指数"
+    type: "table"
+    unit: "dimensionless"
+    spatial: "province"
+    temporal: "annual"
+    metrics: ["concentration_index", "benefit_incidence_ratio", "gini_exposure"]
+
+traceability:
+  - source: "layer_03"
+    link: "workflow/layers/03_atmospheric_transport.yaml"
+    description: "Concentration fields feed exposure assessment"
+  - source: "gbd_health"
+    link: "技能: skills/data_acquisition/ihme-gbd-results"
+    description: "Baseline mortality/morbidity rates"
+  - source: "population"
+    link: "技能: skills/data_acquisition/worldpop"
+    description: "Gridded population for exposure weighting"
+  - source: "health_ier"
+    link: "文献: GBD 2019 IER parameters"
+    description: "Integrated exposure-response functions"
+  - source: "scc"
+    link: "文献: US EPA Social Cost of Carbon"
+    description: "Carbon social cost estimates"
+
+causal_identification:
+  question: "Did changes in emission/concentration cause changes in health/economic outcomes?"
+  framework: "Neyman-Rubin potential outcomes + DAG"
+  strategies:
+    - name: "Difference-in-Differences (DID)"
+      applicable_when: "Policy implementation with staggered timing across regions"
+      assumptions: ["Parallel trends", "No anticipation", "Stable unit treatment"]
+    - name: "Double Machine Learning (DML)"
+      applicable_when: "High-dimensional confounders (meteorology, demographics)"
+      assumptions: ["Unconfoundedness given controls", "Overlap"]
+    - name: "Instrumental Variables"
+      applicable_when: "Endogenous exposure (e.g., pollution driven by economic activity)"
+      instruments: ["Wind direction", "Thermal inversion frequency", "Policy mandates"]
+  refutation_tests:
+    - "Placebo treatment (shift policy year)"
+    - "Placebo outcome (use unrelated cause of death)"
+    - "Sensitivity analysis (vary confounder set)"
+    - "Spatial falsification (treat non-affected regions)"

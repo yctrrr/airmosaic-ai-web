@@ -1,0 +1,147 @@
+﻿# Layer 1: Socioeconomic Driver
+# 宏观经济/微观经济 → 活动水平 → 能源使用 → 末端治理技术
+
+layer:
+  id: "01_socioeconomic"
+  name: "社会经济驱动力分析"
+  description: >
+    Model how macroeconomic and microeconomic variables drive
+    activity levels, energy consumption, and end-of-pipe technology adoption.
+
+inputs:
+  required:
+    - id: "gdp_projection"
+      source: "catalog/datasets/gdp.yaml"
+      description: "GDP projections by sector and region"
+      spatial_resolution: "province"
+      temporal_resolution: "annual"
+
+    - id: "population"
+      source: "catalog/datasets/population.yaml"
+      description: "Population by age group and region"
+      spatial_resolution: "grid / province"
+      temporal_resolution: "annual"
+
+    - id: "industrial_structure"
+      source: "external/statistical_yearbook"
+      description: "Industrial output, value-added by sector"
+      spatial_resolution: "province"
+      temporal_resolution: "annual"
+
+  optional:
+    - id: "energy_price"
+      source: "external/energy_statistics"
+      description: "Coal, oil, gas, electricity prices"
+
+    - id: "technology_penetration"
+      source: "external/technology_inventory"
+      description: "End-of-pipe technology adoption rates"
+
+    - id: "gcam_scenario"
+      source: "skills/model/gcam"
+      description: "GCAM scenario output for energy system pathways"
+
+modules:
+  - id: "macro_economic_projection"
+    name: "宏观经济预测"
+    description: "Project GDP, industrial structure, urbanization under policy scenarios"
+
+    high_data:
+      method: "transformer_timeseries"
+      description: "Transformer-based time-series model with policy scenario conditioning"
+      inputs: [gdp_projection, population, industrial_structure]
+      outputs: [projected_gdp, projected_sector_output, projected_urbanization]
+
+    low_data:
+      method: "ssp_projection"
+      description: "SSP scenario-based extrapolation with expert adjustment"
+      inputs: [gdp_projection]
+      outputs: [projected_gdp, projected_sector_output]
+
+  - id: "activity_level"
+    name: "活动水平计算"
+    description: "Translate economic output to physical activity levels (steel tons, cement tons, vehicle-km)"
+
+    high_data:
+      method: "elasticity_ml"
+      description: "ML-estimated sector-specific GDP-activity elasticities with regional heterogeneity"
+      inputs: [projected_gdp, industrial_structure]
+      outputs: [sector_activity_level]
+
+    low_data:
+      method: "fixed_elasticity"
+      description: "Published elasticity coefficients from literature"
+      inputs: [projected_gdp]
+      outputs: [sector_activity_level]
+
+  - id: "energy_demand"
+    name: "能源需求"
+    description: "Convert activity levels to energy demand by fuel type"
+
+    high_data:
+      method: "gcam_integration"
+      description: "Use GCAM scenario output for energy system pathways"
+      inputs: [sector_activity_level, gcam_scenario, energy_price]
+      outputs: [energy_by_fuel, energy_by_sector]
+
+    low_data:
+      method: "energy_intensity_lookup"
+      description: "Sector-specific energy intensity coefficients from statistical yearbooks"
+      inputs: [sector_activity_level]
+      outputs: [energy_by_fuel]
+
+  - id: "end_of_pipe_technology"
+    name: "末端治理技术渗透"
+    description: "Project adoption rates of end-of-pipe control technologies"
+
+    high_data:
+      method: "diffusion_ml"
+      description: "Technology diffusion model with policy-driven adoption rates"
+      inputs: [technology_penetration, projected_gdp]
+      outputs: [technology_penetration_rate, removal_efficiency]
+
+    low_data:
+      method: "expert_scenario"
+      description: "Scenario-based penetration rates from policy documents"
+      inputs: [technology_penetration]
+      outputs: [technology_penetration_rate]
+
+outputs:
+  - id: "projected_gdp"
+    name: "预测GDP"
+    type: "timeseries"
+    unit: "10^4 CNY (constant price)"
+    spatial: "province"
+    temporal: "annual"
+
+  - id: "sector_activity_level"
+    name: "部门活动水平"
+    type: "timeseries"
+    unit: "tonnes / vehicle-km / m2"
+    spatial: "province"
+    temporal: "annual"
+
+  - id: "energy_by_fuel"
+    name: "分燃料能源消费"
+    type: "timeseries"
+    unit: "EJ / 10^4 tce"
+    spatial: "province"
+    temporal: "annual"
+
+  - id: "technology_penetration_rate"
+    name: "末端治理技术渗透率"
+    type: "timeseries"
+    unit: "fraction (0-1)"
+    spatial: "province"
+    temporal: "annual"
+
+traceability:
+  - source: "gcam_scenario"
+    link: "技能: skills/model/gcam"
+    description: "GCAM scenario outputs feed energy system pathways"
+  - source: "population"
+    link: "技能: skills/data_acquisition/worldpop"
+    description: "Population grids for exposure weighting"
+  - source: "industrial_structure"
+    link: "外部: 统计年鉴/投入产出表"
+    description: "Sectoral economic structure from official statistics"

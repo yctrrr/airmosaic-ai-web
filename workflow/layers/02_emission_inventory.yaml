@@ -1,0 +1,139 @@
+﻿# Layer 2: Emission Inventory
+# 社会经济变量 → 污染物排放 → 碳排放变化
+
+layer:
+  id: "02_emission_inventory"
+  name: "排放清单编制"
+  description: >
+    Translate socioeconomic activity and energy consumption
+    into pollutant emissions and carbon emissions, accounting
+    for end-of-pipe control technology effects.
+
+inputs:
+  required:
+    - id: "energy_by_fuel"
+      source: "layer_01.output"
+      description: "Energy consumption by fuel type and sector"
+      spatial_resolution: "province"
+      temporal_resolution: "annual"
+
+    - id: "sector_activity_level"
+      source: "layer_01.output"
+      description: "Industrial activity levels"
+      spatial_resolution: "province"
+      temporal_resolution: "annual"
+
+    - id: "technology_penetration_rate"
+      source: "layer_01.output"
+      description: "End-of-pipe technology adoption rates"
+
+    - id: "emission_factor_base"
+      source: "external/emission_factor_database"
+      description: "Baseline emission factors by sector, fuel, technology"
+
+  optional:
+    - id: "meic_emission"
+      source: "catalog/datasets/meic_emission.yaml"
+      description: "MEIC emission inventory as baseline reference"
+
+    - id: "process_emission_factor"
+      source: "external/industrial_process_guide"
+      description: "Process-specific emission factors (cement, steel, etc.)"
+
+modules:
+  - id: "fuel_combustion_emission"
+    name: "燃料燃烧排放"
+    description: "Calculate emissions from fuel combustion: activity × emission_factor × (1 - removal_efficiency)"
+
+    high_data:
+      method: "transformer_emission"
+      description: >
+        Transformer model trained on MEIC historical inventory
+        to predict spatial-temporal emission patterns from activity proxies.
+        Cross-validated against monitoring data.
+      inputs: [energy_by_fuel, technology_penetration_rate, meic_emission, emission_factor_base]
+      outputs: [combustion_emission_grid]
+
+    low_data:
+      method: "emission_factor_method"
+      description: >
+        Standard emission factor method:
+        E = Σ(A_i × EF_i × (1 - η_i))
+        where A=activity, EF=emission factor, η=removal efficiency
+      inputs: [energy_by_fuel, technology_penetration_rate, emission_factor_base]
+      outputs: [combustion_emission_province]
+
+  - id: "industrial_process_emission"
+    name: "工业过程排放"
+    description: "Process emissions not from fuel combustion (cement calcination, steel making)"
+
+    high_data:
+      method: "process_ml"
+      description: "ML model linking process parameters to emission rates"
+      inputs: [sector_activity_level, process_emission_factor]
+      outputs: [process_emission_grid]
+
+    low_data:
+      method: "process_factor_method"
+      description: "Activity × process emission factor"
+      inputs: [sector_activity_level, process_emission_factor]
+      outputs: [process_emission_province]
+
+  - id: "carbon_emission"
+    name: "碳排放"
+    description: "CO2 emissions from energy and industrial processes"
+
+    high_data:
+      method: "carbon_ml"
+      description: "ML model with carbon content verification against satellite observations"
+      inputs: [energy_by_fuel, sector_activity_level, emission_factor_base]
+      outputs: [carbon_emission_grid]
+
+    low_data:
+      method: "carbon_factor_method"
+      description: "Fuel carbon content × consumption"
+      inputs: [energy_by_fuel, emission_factor_base]
+      outputs: [carbon_emission_province]
+
+  - id: "emission_gridding"
+    name: "排放空间网格化"
+    description: "Map province-level emissions to spatial grids using proxies"
+
+    high_data:
+      method: "proxy_transformer"
+      description: "Transformer-based spatial downscaling using multi-source proxies"
+      inputs: [combustion_emission_province, process_emission_province]
+      outputs: [emission_grid_1km]
+
+    low_data:
+      method: "population_weighted"
+      description: "Population-weighted spatial allocation"
+      inputs: [combustion_emission_province, population]
+      outputs: [emission_grid_1km]
+
+outputs:
+  - id: "emission_grid"
+    name: "排放网格"
+    type: "raster"
+    unit: "tonnes/grid/year"
+    spatial: "1km × 1km"
+    temporal: "annual"
+    pollutants: ["SO2", "NOx", "PM2.5", "PM10", "VOC", "NH3", "CO2"]
+
+  - id: "emission_by_sector"
+    name: "分部门排放"
+    type: "table"
+    unit: "tonnes/year"
+    spatial: "province"
+    temporal: "annual"
+
+traceability:
+  - source: "layer_01"
+    link: "workflow/layers/01_socioeconomic.yaml"
+    description: "All activity and energy inputs originate from socioeconomic driver layer"
+  - source: "meic_emission"
+    link: "数据: MEIC emission inventory"
+    description: "Historical emission baseline for model training/validation"
+  - source: "emission_factor_base"
+    link: "外部: 排放因子数据库"
+    description: "Published emission factors from MEE guidelines"
