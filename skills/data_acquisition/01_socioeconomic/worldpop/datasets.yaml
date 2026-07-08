@@ -1,0 +1,30 @@
+skill_id: worldpop
+layer: 01_socioeconomic
+skill_path: skills/data_acquisition/01_socioeconomic/worldpop
+datasets:
+  - dataset_id: worldpop_population_grid
+    name: WorldPop gridded population
+    domain: socioeconomic
+    description: Population raster products by country, year, age, sex, and WorldPop product family.
+    access_mode: api_download
+    geography: global
+    temporal_coverage: product-dependent, commonly 2000-2020
+    formats: [tif, csv, json]
+    cache_root: ${AIRMOSAIC_LOCAL_WORKSPACE}/data_cache/worldpop
+    acquisition_skill: skills/data_acquisition/01_socioeconomic/worldpop
+    example_queries:
+      - China population grid for PM2.5 exposure weighting
+      - age-sex population fractions by grid cell
+  - dataset_id: worldpop_zonal_statistics
+    name: WorldPop zonal statistics
+    domain: socioeconomic
+    description: Population summaries from WorldPop raster products over user-defined polygons or administrative units.
+    access_mode: api_query
+    geography: global
+    temporal_coverage: product-dependent
+    formats: [csv, json]
+    cache_root: ${AIRMOSAIC_LOCAL_WORKSPACE}/data_cache/worldpop/derived
+    acquisition_skill: skills/data_acquisition/01_socioeconomic/worldpop
+    example_queries:
+      - county-level population summary from WorldPop rasters
+      - exposure-weighted population by administrative region

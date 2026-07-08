@@ -1,0 +1,30 @@
+skill_id: csmar
+layer: 01_socioeconomic
+skill_path: skills/data_acquisition/01_socioeconomic/csmar
+datasets:
+  - dataset_id: csmar_listed_company_basic
+    name: CSMAR listed-company basic information
+    domain: socioeconomic
+    description: Listed-company identity, industry classification, location, ownership, and basic firm attributes from CSMAR.
+    access_mode: authenticated_browser_download
+    geography: China listed companies
+    temporal_coverage: source-dependent
+    formats: [xlsx, csv]
+    cache_root: ${AIRMOSAIC_LOCAL_WORKSPACE}/data_cache/csmar/listed_company_basic
+    acquisition_skill: skills/data_acquisition/01_socioeconomic/csmar
+    example_queries:
+      - listed industrial firms by province and sector
+      - company-level socioeconomic activity indicators
+  - dataset_id: csmar_financial_statements
+    name: CSMAR financial statement tables
+    domain: socioeconomic
+    description: Firm-level financial indicators for listed companies, used for socioeconomic drivers and industry activity analysis.
+    access_mode: authenticated_browser_download
+    geography: China listed companies
+    temporal_coverage: source-dependent
+    formats: [xlsx, csv]
+    cache_root: ${AIRMOSAIC_LOCAL_WORKSPACE}/data_cache/csmar/financial_statements
+    acquisition_skill: skills/data_acquisition/01_socioeconomic/csmar
+    example_queries:
+      - firm revenue and cost indicators by sector
+      - listed-company activity variables for causal analysis

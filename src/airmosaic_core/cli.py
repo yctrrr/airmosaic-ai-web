@@ -13,7 +13,10 @@ def main() -> None:
     parser = argparse.ArgumentParser(prog="airmosaic")
     subparsers = parser.add_subparsers(dest="command", required=True)
 
-    subparsers.add_parser("list-datasets")
+    list_datasets = subparsers.add_parser("list-datasets")
+    list_datasets.add_argument("--layer")
+    list_datasets.add_argument("--skill")
+    list_datasets.add_argument("--domain")
 
     describe = subparsers.add_parser("describe-dataset")
     describe.add_argument("dataset_id")
@@ -40,9 +43,17 @@ def main() -> None:
                 "dataset_id": item.dataset_id,
                 "name": item.name,
                 "domain": item.domain,
+                "layer": item.layer,
+                "skill_id": item.skill_id,
+                "skill_path": item.skill_path,
+                "access_mode": item.access_mode,
                 "description": item.description,
             }
-            for item in catalog.list_datasets()
+            for item in catalog.list_datasets(
+                layer=args.layer,
+                skill=args.skill,
+                domain=args.domain,
+            )
         ]
     elif args.command == "describe-dataset":
         payload = catalog.describe_dataset(args.dataset_id)
@@ -52,6 +63,8 @@ def main() -> None:
                 "dataset_id": item.dataset_id,
                 "name": item.name,
                 "domain": item.domain,
+                "layer": item.layer,
+                "skill_id": item.skill_id,
             }
             for item in catalog.search_datasets(args.query)
         ]
@@ -79,4 +92,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-

@@ -1,0 +1,30 @@
+skill_id: ihme-gbd-results
+layer: 04_impact
+skill_path: skills/data_acquisition/04_impact/ihme-gbd-results
+datasets:
+  - dataset_id: ihme_gbd_mortality_rates
+    name: IHME GBD mortality rates
+    domain: health
+    description: Cause-, age-, sex-, year-, and location-specific mortality rates from IHME GBD Results.
+    access_mode: authenticated_browser_download
+    geography: global, country, and subnational where available
+    temporal_coverage: GBD-release-dependent
+    formats: [csv]
+    cache_root: ${AIRMOSAIC_LOCAL_WORKSPACE}/data_cache/gbd_health/mortality_rates
+    acquisition_skill: skills/data_acquisition/04_impact/ihme-gbd-results
+    example_queries:
+      - China baseline mortality rate by cause age sex and year
+      - PM2.5 endpoint mortality inputs
+  - dataset_id: ihme_gbd_population
+    name: IHME GBD population estimates
+    domain: health
+    description: GBD population estimates by age, sex, location, and year for burden-rate normalization or validation.
+    access_mode: authenticated_browser_download
+    geography: global, country, and subnational where available
+    temporal_coverage: GBD-release-dependent
+    formats: [csv]
+    cache_root: ${AIRMOSAIC_LOCAL_WORKSPACE}/data_cache/gbd_health/population
+    acquisition_skill: skills/data_acquisition/04_impact/ihme-gbd-results
+    example_queries:
+      - population denominator for GBD rate validation
+      - age-sex population series by location

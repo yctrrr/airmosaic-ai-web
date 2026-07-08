@@ -12,7 +12,7 @@ AirMosaic AI is a locally deployed atmospheric environment decision intelligence
 
 ## Agent Runtime Setup
 
-Install one of the local coding agents below, then open this repository root.
+Install a local coding agent, then open this repository root.
 
 ### Codex CLI
 
@@ -24,15 +24,7 @@ codex
 
 Codex should read this `AGENTS.md` file from the repository root before operating on the project.
 
-### Claude Code
-
-```powershell
-irm https://claude.ai/install.ps1 | iex
-cd D:\AirMosaicAI\airmosaic-ai-core
-claude
-```
-
-Claude Code should read `CLAUDE.md`, which redirects to this guide. If an agent does not load the file automatically, ask it to read `AGENTS.md` before running commands or editing files.
+If an agent does not load this file automatically, ask it to read `AGENTS.md` before running commands or editing files.
 
 ## Project Setup (One-Time)
 
@@ -77,19 +69,24 @@ To use a skill, read its `SKILL.md` completely, then follow the instructions in 
 
 ```powershell
 airmosaic list-datasets
+airmosaic list-datasets --layer 01_socioeconomic
+airmosaic list-datasets --skill worldpop
+airmosaic list-datasets --domain health
 airmosaic check-availability population
 airmosaic draft-causal-plan --question "..." --treatment "..." --outcome "..."
 ```
+
+`list-datasets` reads `skills/data_acquisition/**/datasets.yaml`, not a remote live catalog. It tells agents which datasets can be acquired or processed by the currently installed skills and where to find the responsible skill.
 
 `draft-causal-plan` is a local template generator. It does not call an external LLM or agent. Treat its JSON output as a structured starting point, then extend it with your own reasoning, project skills, and data checks.
 
 ### External Agent Workflow
 
-When using Codex, Claude Code, or another agent system:
+When using Codex or another agent system:
 
 1. Open `D:\AirMosaicAI\airmosaic-ai-core` as the workspace root.
-2. Read `AGENTS.md` and, for Claude Code, `CLAUDE.md`.
-3. Use `airmosaic list-datasets` to inspect registered data.
+2. Read `AGENTS.md`.
+3. Use `airmosaic list-datasets` to inspect datasets declared by data acquisition skills.
 4. Use `airmosaic check-availability <dataset_id>` to verify local cache availability.
 5. Read the relevant `skills/**/SKILL.md` before running a skill workflow.
 6. Use `airmosaic draft-causal-plan ...` only as a local JSON scaffold for causal design.

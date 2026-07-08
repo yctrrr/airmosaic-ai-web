@@ -21,7 +21,6 @@ D:\AirMosaicAI\
 catalog/                   Dataset metadata (YAML schemas)
 workflow/                  Analysis pipeline templates (4 layers)
 AGENTS.md                  Agent-facing setup and operating guide
-CLAUDE.md                  Claude Code entrypoint, redirects to AGENTS.md
 skills/
   data_acquisition/        Data source connectors — organized by workflow layer
     01_socioeconomic/      WorldPop, CSMAR, industrial yearbook
@@ -64,8 +63,11 @@ Method selection follows data availability. For modules with sufficient historic
 cd D:\AirMosaicAI\airmosaic-ai-core
 pip install -e .[dev]
 
-# CLI: list datasets
+# CLI: list data acquisition datasets declared by skills
 airmosaic list-datasets
+airmosaic list-datasets --layer 01_socioeconomic
+airmosaic list-datasets --skill worldpop
+airmosaic list-datasets --domain health
 
 # CLI: check local data availability
 airmosaic check-availability population
@@ -76,12 +78,12 @@ airmosaic draft-causal-plan --question "Did clean air policy reduce mortality?" 
 
 ### External Agent Example
 
-For Codex, Claude Code, or another local agent, start from the repository root and ask the agent to read the project instructions before taking actions:
+For Codex or another local agent, start from the repository root and ask the agent to read the project instructions before taking actions:
 
 ```text
 Open D:\AirMosaicAI\airmosaic-ai-core.
-Read AGENTS.md first. If you are Claude Code, also read CLAUDE.md.
-List available datasets with `airmosaic list-datasets`.
+Read AGENTS.md first.
+List skill-declared datasets with `airmosaic list-datasets`.
 Check population cache availability with `airmosaic check-availability population`.
 Read the relevant `skills/**/SKILL.md` before running any workflow.
 Use `airmosaic draft-causal-plan ...` only as a local JSON scaffold, then extend it with your own reasoning.
@@ -90,6 +92,8 @@ Use `airmosaic draft-causal-plan ...` only as a local JSON scaffold, then extend
 ## Skills
 
 Skills are self-contained modules with SKILL.md, scripts/, references/, and examples/. Each skill encapsulates a specific data source, model, or analysis method with its own tooling, documentation, and agent contract.
+
+Data acquisition skills may also include `datasets.yaml`, which declares the datasets that the skill can acquire or process. `airmosaic list-datasets` reads these files, so the command reflects the currently available acquisition capabilities in `skills/data_acquisition/`.
 
 **data_acquisition/** — connectors for external data sources, organized by the four workflow layers:
 
@@ -105,7 +109,7 @@ Skills are self-contained modules with SKILL.md, scripts/, references/, and exam
 
 ## External Agent Interface
 
-*Under development.* The services layer (src/airmosaic_core/services/) exposes a Python SDK and CLI that external agents (Codex, Claude, custom tools) can invoke for data discovery, local cache resolution, and local causal-design templates. MCP tool definitions and REST API are planned.
+*Under development.* The services layer (src/airmosaic_core/services/) exposes a Python SDK and CLI that external agents (Codex or custom tools) can invoke for data discovery, local cache resolution, and local causal-design templates. MCP tool definitions and REST API are planned.
 
 ## Data Boundary
 
@@ -113,7 +117,7 @@ This repo does **NOT** contain: raw environmental data, API keys, or model outpu
 
 ## Agent Integration
 
-AirMosaic AI is designed to be invoked by AI agents (Codex, Claude Code, custom tools). See [AGENTS.md](AGENTS.md) for setup instructions, skill discovery, and usage conventions.
+AirMosaic AI is designed to be invoked by AI agents (Codex or custom tools). See [AGENTS.md](AGENTS.md) for setup instructions, skill discovery, and usage conventions.
 
 **Quick start for an agent:**
 
@@ -123,7 +127,7 @@ pip install -e .[dev]
 airmosaic list-datasets
 ```
 
-Codex should read `AGENTS.md` from the repository root. Claude Code should read `CLAUDE.md`, which points to the same agent guide. Each skill registers its interface in `agents/openai.yaml`; read the relevant `SKILL.md` before running a workflow.
+External agents should read `AGENTS.md` from the repository root. Each skill registers its interface in `agents/openai.yaml`; read the relevant `SKILL.md` before running a workflow.
 
 For external agents, the recommended pattern is: open this repository root, read `AGENTS.md`, inspect the relevant `SKILL.md`, call `airmosaic` CLI commands for catalog/cache/template tasks, and then use the agent's own reasoning to extend the returned JSON into a full analysis plan. The CLI does not call an external LLM by itself.
 

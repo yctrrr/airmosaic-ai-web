@@ -38,7 +38,10 @@ class DataAccessService:
     ) -> FileAvailability:
         dataset_id = self.catalog.resolve_dataset_id(dataset_id)
         metadata = self.catalog.describe_dataset(dataset_id)
-        cache_root = self._resolve_cache_root(metadata["default_cache_root"])
+        cache_root_template = metadata.get("cache_root") or metadata.get("default_cache_root")
+        if cache_root_template is None:
+            raise KeyError(f"Dataset metadata has no cache_root: {dataset_id}")
+        cache_root = self._resolve_cache_root(cache_root_template)
         files = (
             sorted(
                 path
@@ -48,7 +51,8 @@ class DataAccessService:
             if cache_root.exists()
             else []
         )
-        missing_hint = None if files else f"No files found under {cache_root}. Use {metadata['acquisition_skill']}."
+        acquisition_skill = metadata.get("acquisition_skill") or metadata.get("skill_path", "the related acquisition skill")
+        missing_hint = None if files else f"No files found under {cache_root}. Use {acquisition_skill}."
         return FileAvailability(
             dataset_id=dataset_id,
             cache_root=cache_root,
