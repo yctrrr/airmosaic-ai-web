@@ -1,0 +1,3 @@
+﻿interface:
+  display_name: CSMAR Data Downloader
+  short_description: Download CSMAR listed-company data and extract target-industry candidates for socioeconomic driver analysis.

@@ -1,0 +1,22 @@
+﻿{
+  "dataset_id": "csmar_listed_company_basic_info",
+  "table": "Listed Company Basic Information",
+  "entry_url": "https://data.csmar.com/csmar.html#/datacenter/singletable/search?databaseId=176",
+  "parameters": {
+    "fields": ["all"],
+    "stock_type": "A-share",
+    "status": "active"
+  },
+  "output": {
+    "format": "zip (contains xlsx + field description txt)",
+    "save_to": "${AIRMOSAIC_LOCAL_WORKSPACE}/data_cache/csmar/"
+  },
+  "postprocess": {
+    "script": "scripts/process_listed_company_basic_info.py",
+    "outputs": [
+      "csmar_target_industry_company_candidates.csv",
+      "csmar_target_industry_company_list_latest.csv",
+      "csmar_target_industry_company_list_latest.xlsx"
+    ]
+  }
+}
